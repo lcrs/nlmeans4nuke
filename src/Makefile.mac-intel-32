@@ -1,0 +1,21 @@
+CPPFLAGS = -I/Applications/Nuke/Nuke.app/Contents/MacOS/include
+CFLAGS = -Wall -DUSE_GLEW -c -O3 -ffast-math -fpermissive -m32
+LFLAGS = -bundle -noprebind -undefined suppress -m32
+MORELFLAGS = -flat_namespace -framework IOKit -framework CoreFoundation \
+ -framework Carbon -framework ApplicationServices -framework AGL \
+ -framework OpenGL
+
+Nlmeans.dylib: nlmeans.o nlmeans_lib.o Makefile
+	g++ $(LFLAGS) -o Nlmeans.dylib nlmeans.o nlmeans_lib.o $(MORELFLAGS)
+
+nlmeans.o: nlmeans.cpp Makefile
+	g++ $(CPPFLAGS) $(CFLAGS) -o nlmeans.o nlmeans.cpp
+
+nlmeans_lib.o: nlmeans_lib.cpp nlmeans_lib.h Makefile
+	g++ $(CPPFLAGS) $(CFLAGS) -o nlmeans_lib.o nlmeans_lib.cpp
+
+clean:
+	rm -f nlmeans.o nlmeans_lib.o Nlmeans.dylib
+
+install: Nlmeans.dylib Makefile
+	cp Nlmeans.dylib ~/.nuke/
